@@ -1,0 +1,22 @@
+{
+  "name": "messageBoard",
+  "version": "1.0.0",
+  "description": "messageBoard ============",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies":{
+    "express":"*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liuxiaoyue/messageBoard.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/liuxiaoyue/messageBoard/issues"
+  },
+  "homepage": "https://github.com/liuxiaoyue/messageBoard"
+}
