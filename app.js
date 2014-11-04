@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var flash = require('connect-flash');
 
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
@@ -26,6 +27,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(flash());
 
 //提供session支持
 app.use(session({
@@ -36,6 +38,7 @@ app.use(session({
 }));
 
 app.use('/', routes);
+app.use('/reg', routes);
 app.use('/users', users);
 
 // catch 404 and forward to error handler
@@ -68,5 +71,9 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
+
+//下面两行代码仅供开发时使用。
+app.set('port', process.env.PORT || 3000);
+app.listen(app.get('port'));
 
 module.exports = app;

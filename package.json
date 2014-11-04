@@ -22,7 +22,8 @@
     "debug": "~2.0.0",
     "ejs": "~0.8.5",
     "mongodb": "*",
-    "connect-mongo":"*"
+    "connect-mongo":"*",
+    "connect-flash":"*"
   },
   "repository": {
     "type": "git",
