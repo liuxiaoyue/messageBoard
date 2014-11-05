@@ -1,3 +1,7 @@
+/**
+ * @fileoverview 新注册用户存储在数据库中
+ */
+
 var mongodb = require('./db');
 
 function User(user){
@@ -44,8 +48,9 @@ User.get = function(username,callback){
 			collection.findOne({name:username},function(err,doc){
 				mongodb.close();
 				if(doc){
-					var user = new User(doc);
-					callback(err, User);
+					// console.log('xiaoyue:mongodb:' + JSON.stringify(doc));
+					// var user = new User(doc);
+					callback(err, doc);
 				}else{
 					callback(err, null);
 				}
