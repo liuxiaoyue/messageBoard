@@ -4,20 +4,17 @@
 
 var mongodb = require('./db');
 
-function User(user){
-	this.mail = user.mail;
-	this.name = user.name;
-	this.password = user.password;
+function Post(user){
+	this.content = user.content;
+	this.time = user.time;
 }
 
-User.prototype.save = function(callback){
+Post.prototype.save = function(name, callback){
 	//存入mongodb的文档
-	var user = {
-		mail : this.mail,
-		name : this.name,
-		password : this.password
+	var post = {
+		content : this.content,
+		time : this.time
 	};
-
 	mongodb.open(function(err, db){
 		if(err){
 			return callback(err);
@@ -29,15 +26,22 @@ User.prototype.save = function(callback){
 				return callback(err);
 			}
 			//写入user文档
-			collection.insert(user,function(err,user){
-				mongodb.close();
-				callback(err, user[0]);
+			collection.findOne({name:name}, function(err,user){
+				if(!user.posts){
+					user.posts = [];
+				}
+				user.posts.push(post);
+
+				collection.update({name:name},user,function(err){
+					mongodb.close();
+					callback(err, post);
+				});
 			});
 		});
 	});
 };
 
-User.get = function(username,callback){
+Post.get = function(username,callback){
 	mongodb.open(function(err, db){
 		if(err){
 			return callback(err);
@@ -59,5 +63,5 @@ User.get = function(username,callback){
 	});
 };
 
-module.exports = User;
+module.exports = Post;
 
