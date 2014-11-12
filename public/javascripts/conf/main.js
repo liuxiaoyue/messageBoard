@@ -6,17 +6,6 @@
  */
 define('conf/main', function(require, exports, module) {
 	var $ = require('$');
-	function loginOut(){
-		$.ajax({
-			url: '/logout',
-			type: 'get',
-			data: {
-			},
-			success: function(data) {
-			}
-		});
-	}
-
 	function postMessage(){
 		var el = $(this);
 		var val = $('textarea').val();
@@ -35,7 +24,5 @@ define('conf/main', function(require, exports, module) {
 			}
 		});
 	}
-
-	$('#loginOut').on('click', loginOut);
 	$('#post').on('click', postMessage);
 });

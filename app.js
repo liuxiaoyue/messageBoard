@@ -38,9 +38,16 @@ app.use(session({
 }));
 
 app.use('/', routes);
+//注册页
 app.use('/reg', routes);
+app.use('/reg/invite', routes);
+app.use('/reg/active/:active', routes);
+//登陆页
 app.use('/login', routes);
+//个人中心页
 app.use('/u/:user', users);
+//首页
+app.use('/home', users);
 
 app.use('/users', users);
 

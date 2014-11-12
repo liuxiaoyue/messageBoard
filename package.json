@@ -23,7 +23,8 @@
     "ejs": "~0.8.5",
     "mongodb": "*",
     "connect-mongo":"*",
-    "connect-flash":"*"
+    "connect-flash":"*",
+    "nodemailer":"*"
   },
   "repository": {
     "type": "git",

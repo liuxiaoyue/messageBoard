@@ -37,7 +37,7 @@ User.prototype.save = function(callback){
 	});
 };
 
-User.get = function(username,callback){
+User.get = function(mail,callback){
 	mongodb.open(function(err, db){
 		if(err){
 			return callback(err);
@@ -47,7 +47,7 @@ User.get = function(username,callback){
 				mongodb.close();
 				return callback(err);
 			}
-			collection.findOne({name:username},function(err,doc){
+			collection.findOne({mail:mail},function(err,doc){
 				mongodb.close();
 				if(doc){
 					callback(err, doc);

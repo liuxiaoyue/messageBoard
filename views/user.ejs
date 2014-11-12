@@ -10,6 +10,17 @@
   <body>
   	<div class="container">
 	<p>欢迎登录！<span id="name"><%= name %></span> &nbsp; &nbsp; &nbsp; &nbsp;<a href="/logout">退出</a></p>
+  <div>
+    <textarea rows="5"></textarea>
+    <button id="post">留言</button>
+  </div>
+  <ul id="list">
+    <% if (posts) { %>
+      <% for(var i=0; i<posts.length; i++) {%>
+         <li><span><%= name %></span><p><span><%= posts[i].time %></span><br/><%= posts[i].content %></p></li>
+      <% } %>
+    <% } %>
+  </ul>
     </div>
     <script type="text/javascript">
     var $CONFIG={};
