@@ -19,8 +19,13 @@ define('conf/main', function(require, exports, module) {
 				time : date,
 				name : name
 			},
-			success: function(data) {
-				$('#list').append('<li><span>'+ $CONFIG.username +'</span><br/><span>'+ new Date(parseInt(data.time)) +'</span><p><span>'+ data.content+'</span></p></li>');
+			success: function(re) {
+				if(re && re.code === "A00006"){
+					var data = re.data;
+					$('#list').append('<li><span>'+ $CONFIG.username +'</span><br/><span>'+ data.time +'</span><p><span>'+ data.content+'</span></p></li>');
+				}else{
+					alert(ret.message || '系统繁忙,请稍后再试！');
+				}
 			}
 		});
 	}

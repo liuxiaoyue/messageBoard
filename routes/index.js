@@ -2,24 +2,9 @@ var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
 var User = require('../models/user');
-var Post = require('../models/post');
 var base64 = require('../lib/base64');
 var mail = require('../lib/mail');
 var util = require('../lib/utils');
-
-function checkNotLogin(req, res, next){
-	if(!req.session.user){
-		req.flash('error','用户未登录,请登录');
-		return res.redirect('/login');
-	}
-	next();
-}
-function checkLogin(req, res, next){
-	if(req.session.user){
-		req.flash('error','用户已经登录');
-	}
-	next();
-}
 
 router.get('/home', function(req, res){
 	if(req.session.user){
@@ -48,15 +33,13 @@ router.post('/reg/invite', function(req, res){
 			nick = req.body.nickname.trim();
 		var activeUrl = 'http://127.0.0.1:3000/reg/active/' + encodeURIComponent(base64.encode('accounts=' + encodeURIComponent(email) + '&timestamps=' + new Date().getTime() + '&nick=' + encodeURIComponent(nick)));
 		console.log(activeUrl);
-		User.get(email, function(err,user){
+		User.get({mail:email}, function(err,user){
 			if(!err || !user){
 				mail.sendMail({
 					to : email,
 					subject: nick +',欢迎注册海蓝之星留言板!',
 					html: 'hi'+ nick + '<br>欢迎注册海蓝之星留言板，请点击如下链接或复制链接到浏览器打开以激活您的账号！<a href="'+ activeUrl+'">'+ activeUrl +'</a>'
 				}, function(err, info){
-					console.log(err);
-					console.log(info);
 					if(!err && info){
 						res.render('reg/invite', {
 							title : '注册邀请页',
@@ -100,12 +83,15 @@ router.get('/reg/active/:active', function(req, res){
 		}else if(parseInt((activeData['timestamps'] - endTime),10) > 30*60*1000){
 			render('A00002');
 		}else{
+			var md5 = crypto.createHash("md5");
+			md5.update(password);
+			var pwd = md5.digest("hex");
 			var newUser = new User({
 				mail : activeData['accounts'],
 				name : activeData['nick'],
-				password : password
+				password : pwd
 			});
-			User.get(activeData['accounts'], function(err,user){
+			User.get({mail:activeData['accounts']}, function(err,user){
 				if(user){
 					err = 'accounts already exists';
 					render('A00003');
@@ -120,7 +106,7 @@ router.get('/reg/active/:active', function(req, res){
 						mail.sendMail({
 							to : user.mail,
 							subject: '您在海蓝之星留言板注册成功!',
-							text: 'hi'+ nick + '您的账号'+ activeData['accounts']+'已经激活，您的密码是' + password +',热泪欢迎你.... 谢谢您对留言板的支持。'
+							text: 'hi'+ user.name + '您的账号'+ activeData['accounts']+'已经激活，您的密码是' + password +',热泪欢迎你.... 谢谢您对留言板的支持。'
 						});
 					});
 				}
@@ -129,52 +115,20 @@ router.get('/reg/active/:active', function(req, res){
 	}
 });
 
-// router.post('/reg', function(req, res){
-// 	if(req.body['password'] != req.body['password_repeat']){
-// 		req.flash('error','两次输入的密码不一致');
-// 		return res.redirect('/reg');
-// 	}
-// 	//生成口令的散列值
-// 	var md5 = crypto.createHash('md5');
-// 	var password = md5.update(req.body.password).digest('base64');
-// 	var newUser = new User({
-// 		mail : req.body.mail,
-// 		name : req.body.username,
-// 		password : password
-// 	});
-// 	//检查用户名是否已经存在
-// 	User.get(newUser.name, function(err,user){
-// 		if(user){
-// 			err = 'username already exists';
-// 		}
-// 		if(err){
-// 			req.flash('error',err);
-// 			return res.redirect('/reg');
-// 		}
-// 		newUser.save(function(err, user){
-// 			if(err){
-// 				req.flash('error',err);
-// 				return res.redirect('/reg');
-// 			}
-// 			req.session.user = user;
-// 			req.flash('success','注册成功');
-// 			res.redirect('/u/' + user.name);
-// 		});
-// 	});
-// });
-
-
-
 /* GET login page. */
 router.get('/login',function(req, res){
-	res.render('login', { title: 'Express' });
+	if(req.session.user){
+		res.redirect('/home');
+	}else{
+		res.render('login', { title: 'Express' });
+	}
 });
 router.post('/login',function(req, res){
 	var md5 = crypto.createHash('md5');
-	var password = md5.update(req.body.password).digest('base64');
-	var username = req.body.username;
+	var password = md5.update(req.body.password).digest('hex');
+	var mail = req.body.mail;
 	var remember = req.body.remember;
-	User.get(username, function(err,user){
+	User.get({mail : mail}, function(err,user){
 		if(err || !user){
 			req.flash('error','用户名不存在等');
 			return res.redirect('/login');
@@ -187,7 +141,7 @@ router.post('/login',function(req, res){
 						maxAge: maxAge
 					});
 				}
-				res.cookie('accounts',username, {
+				res.cookie('accounts',mail, {
 					maxAge : maxAge
 				});
 				res.cookie('pwd', password, {
@@ -206,67 +160,46 @@ router.post('/login',function(req, res){
 });
 
 /* GET user center page. */
-router.get('/u/:user',checkNotLogin);
 router.get('/u/:user', function(req, res) {
-	User.get(req.params.user,function(err, user){
-		if(err){
-			req.flash('error','数据读取失败');
-			return res.redirect('/error');
-		}
-		if(!user){
-			req.flash('error','用户不存在');
-			//此处应该跳到登录页 或者注册页 反正不要是个人中心页面
-			return res.redirect('/error');
-		}
-		//如果用户存在 应该到数据库中查找发表的留言 返回给页面响应。
-		Post.get(req.params.user, function(err, user){
-			if(err){
-				req.flash('error','获取数据留言内容失败');
+	if(req.session.user){
+		var conf = {mail : req.session.user.mail};
+		User.get(conf,function(err, user){
+			if(!err && user){
+				if(user && user.posts){
+					res.render('user', { title: 'Express',posts: user.posts, name : user.name});
+				}else{
+					res.render('user', { title: 'Express', posts : '', name : req.params.user});
+				}
+			}else{
+				req.flash('error','用户数据读取失败');
 				return res.redirect('/error');
 			}
-			if(user && user.posts){
-				user.posts.forEach(function(item){
-					var time = new Date(parseInt(item.time, 10));
-					item.time = time.getFullYear() +
-					'.' + time.getMonth() +
-					'.' + time.getDate() +
-					' ' + time.getHours() +
-					':' + time.getMinutes() +
-					':' + time.getSeconds();
-				});
-				res.render('user', { title: 'Express',posts: user.posts, name : user.name});
-			}else{
-				res.render('user', { title: 'Express', posts : '', name : req.params.user});
-			}
 		});
-	});
+	}else{
+		return res.redirect('/login');
+	}
 });
-
 //发表留言
 router.post('/post',function(req, res){
-	var newMessage = new Post({
-		content : req.body.content,
-		time : req.body.time
-	});
-	//检查用户名是否已经存在
-	Post.get(req.body.name, function(err,user){
-		if(user){
-			newMessage.save(req.body.name,function(err, post){
-				if(post){
-					res.send(post);
-				}
-			});
-		}
-	});
+	if(req.session.user){
+		var post = {content : req.body.content, time : util.formateTime(req.body.time)};
+		User.update({mail : req.session.user.mail}, post, function(err,user){
+			if(!err && user){
+				res.send({code : 'A00006', data : post});
+			}else{
+				res.send({code : 'A00002', message : '网络繁忙，请稍后再试！带来不便，请谅解....'});
+			}
+		});
+	}else{
+		return res.redirect('/login');
+	}
 });
 
 //用户登出
-router.get('/logout',checkNotLogin);
 router.get('/logout', function(req, res){
 	req.session.is_login = false;
 	req.session.user = null;
 	//此处应该清除cookie信息
-	req.flash('success','用户已经退出登录');
 	res.redirect('/login');
 });
 
