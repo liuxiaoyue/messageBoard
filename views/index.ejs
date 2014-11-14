@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><%= title %></title>
   <link href="/stylesheets/bootstrap.min.css" rel="stylesheet"></head>
+  <style type="text/css">
+  .navbar{margin-bottom: 0;}
+  </style>
 <body>
   <nav class="navbar navbar-default" role="navigation">
     <div class="container">
@@ -17,28 +20,47 @@
           <li class="active">
             <a href="#">首页</a>
           </li>
-          <li>
-            <a href="#about">关于我</a>
-          </li>
+          <% if(name){ %>
+            <li>
+              <a href="/u/<%= name %>">个人中心</a>
+            </li>
+          <% } %>
         </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <a href="/login">登陆</a>
-          </li>
-          <li>
-            <a href="/reg">注册</a>
-          </li>
-        </ul>
+        <% if(name){ %>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/publish">发文章</a>
+            </li>
+            <li>
+              <a href="/set/pwd">修改密码</a>
+            </li>
+            <li>
+              <a href="/logout">退出</a>
+            </li>
+          </ul>
+        <% }else{ %>
+            <ul class="nav navbar-nav navbar-right">
+              <li>
+                <a href="/login">登陆</a>
+              </li>
+              <li>
+                <a href="/reg">注册</a>
+              </li>
+            </ul>
+        <% } %>
       </div>
     </div>
   </nav>
+  <div class="jumbotron">
+    <div class="container">
+      <h1>欢迎您来到九九星期八</h1>
+      <p><span><%= name %></span> 此刻离开喧嚣热闹的城市,静静的享受下醉人的时光!青春正能量！！！</p>
+      <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more »</a></p>
+    </div>
+  </div>
 
   <div class="container">
-    <p>
-      <span id="name"><%= name %></span> &nbsp; &nbsp; 欢迎您来到九九星期八!<br/>
-      离开喧嚣热闹的城市,静静的享受下醉人的时光!
-      <a href="/logout">退出</a>
-    </p>
+    
   </div>
   <script type="text/javascript">
     var $CONFIG={};

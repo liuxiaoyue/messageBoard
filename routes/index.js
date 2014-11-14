@@ -6,16 +6,75 @@ var base64 = require('../lib/base64');
 var mail = require('../lib/mail');
 var util = require('../lib/utils');
 
-router.get('/home', function(req, res){
+//在执行所有路由之前 判断下用户是否是记住登陆状态 登陆了 直接跳到首页
+router.get('*', function(req, res, next){
+	if(req.session.user){
+		//首先看session是否失效
+		//此处可添加判断该用户是否在黑名单里，如果在黑名单里，将页面跳转到500
+		next();
+	}else{
+		//查看本地cookie
+		var accounts = req.cookies.accounts;
+		var pwd = req.cookies.pwd;
+		var remember = req.cookies.remember;
+		if(accounts && pwd){
+			var md5 = crypto.createHash('md5');
+			var password = md5.update(pwd).digest('hex');
+			User.get({mail : accounts}, function(err, user){
+				if(!err && user){
+					if(user.password === password){
+						signInSuccess(req, res, remember, accounts, password, user);
+					}else{
+						next();
+					}
+				}else{
+					next();
+				}
+			});
+		}else{
+			next();
+		}
+	}
+});
+
+//首页结果渲染
+function main(req, res){
 	if(req.session.user){
 		res.render('index',{
 			title : '留言首页',
 			name : req.session.user.name
 		});
 	}else{
-		return res.redirect('/login');
+		res.render('index',{
+			title : '留言首页',
+			name : ''
+		});
 	}
-});
+}
+
+//登陆成功的渲染
+function signInSuccess(req, res, remember, mail, password, user){
+	var maxAge = 0.5 * 60 * 60 * 1000;
+	if(remember){
+		maxAge = 7 * 24 * 60 * 60 * 1000;
+		res.cookie('remember', 1, {
+			maxAge: maxAge
+		});
+	}
+	res.cookie('accounts',mail, {
+		maxAge : maxAge
+	});
+	res.cookie('pwd', password, {
+		maxAge : maxAge
+	});
+	req.session.is_login = true;
+	req.session.user = user;
+	return res.redirect('/home');
+}
+
+router.get('/', main);
+router.get('/home', main);
+
 
 /* GET reg page. */
 router.get('/reg', function(req, res) {
@@ -101,11 +160,10 @@ router.get('/reg/active/:active', function(req, res){
 							req.flash('error',err);
 							return res.redirect('/reg');
 						}
-						req.session.user = user;
 						render('A00006');
 						mail.sendMail({
 							to : user.mail,
-							subject: '您在海蓝之星留言板注册成功!',
+							subject: '您在九九星期八注册成功!',
 							text: 'hi'+ user.name + '您的账号'+ activeData['accounts']+'已经激活，您的密码是' + password +',热泪欢迎你.... 谢谢您对留言板的支持。'
 						});
 					});
@@ -134,22 +192,7 @@ router.post('/login',function(req, res){
 			return res.redirect('/login');
 		}else{
 			if(user.password === password){
-				var maxAge = 0.5 * 60 * 60 * 1000;
-				if(remember){
-					maxAge = 7 * 24 * 60 * 60 * 1000;
-					res.cookie('remember', 1, {
-						maxAge: maxAge
-					});
-				}
-				res.cookie('accounts',mail, {
-					maxAge : maxAge
-				});
-				res.cookie('pwd', password, {
-					maxAge : maxAge
-				});
-				req.session.is_login = true;
-				req.session.user = user;
-				return res.redirect('/u/' + user.name);
+				signInSuccess(req, res, remember, mail, password, user);
 			}
 			if(user.password != password){
 				req.flash('error','用户密码错误');
@@ -158,7 +201,49 @@ router.post('/login',function(req, res){
 		}
 	});
 });
-
+/* set pwd */
+router.get('/set/pwd', function(req, res){
+	if(req.session.user){
+		res.render('publish',{
+			title: '修改密码'
+		});
+	}else{
+		res.redirect('/login');
+	}
+});
+router.post('/set/pwd', function(req, res){
+	if(req.session.user){
+		var oldpwd = req.body.oldpwd;
+		var newpwd = req.body.newpwd;
+		var confirmpwd = req.body.confirmpwd;
+		if(newpwd === confirmpwd){
+			oldpwd = crypto.createHash('md5').update(oldpwd).digest('hex');
+			confirmpwd = crypto.createHash('md5').update(confirmpwd).digest('hex');
+			User.setPwd({mail : req.session.user.mail}, oldpwd, confirmpwd, function(err, user){
+				if(!err && user){
+					req.session.user = null;
+					if(req.cookies.pwd){
+						var maxAge = 7 * 24 * 60 * 60 * 1000;
+						res.cookie('pwd', confirmpwd, {
+							maxAge : maxAge
+						});
+					}
+					res.send({
+						'code' : 'A00001',
+						'message' : '密码修改成功，请重新登录！！！'
+					});
+				}else{
+					res.send({
+						'code' : 'A00001',
+						'message' : '系统繁忙！请稍后再试！'
+					});
+				}
+			});
+		}
+	}else{
+		res.redirect('/login');
+	}
+});
 /* GET user center page. */
 router.get('/u/:user', function(req, res) {
 	if(req.session.user){
@@ -194,6 +279,14 @@ router.post('/post',function(req, res){
 		return res.redirect('/login');
 	}
 });
+
+router.get('/publish', function(req, res) {
+	res.render('publish',{
+		title : '发文章',
+		name : req.session.user.name
+	});
+});
+/* publish page*/
 
 //用户登出
 router.get('/logout', function(req, res){

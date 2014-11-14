@@ -62,6 +62,34 @@ User.update = function(conf, post, callback){
 	});
 };
 
+User.setPwd = function(conf, oldpwd, newpwd, callback){
+	mongodb.open(function(err, db){
+		if(err){
+			return callback(err);
+		}
+		//读取users集合
+		db.collection('users',function(err,collection){
+			if(err){
+				mongodb.close();
+				return callback(err);
+			}
+			collection.findOne(conf, function(err,user){
+				if(!err && user){
+					if(user.password === oldpwd){
+						//更新文档数据
+						collection.update(conf,{'$set': {"password" : newpwd}}, function(err){
+							mongodb.close();
+							callback(err, user);
+						});
+					}
+				}else{
+					callback(err);
+				}
+			});
+		});
+	});
+};
+
 User.get = function(conf,callback){
 	mongodb.open(function(err, db){
 		if(err){

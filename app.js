@@ -44,12 +44,14 @@ app.use('/reg/invite', routes);
 app.use('/reg/active/:active', routes);
 //登陆页
 app.use('/login', routes);
+//修改密码
+app.use('/set/pwd', routes);
 //个人中心页
-app.use('/u/:user', users);
+app.use('/u/:user', routes);
 //首页
-app.use('/home', users);
-
-app.use('/users', users);
+app.use('/home', routes);
+//发布文章页
+app.use('/publish', routes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
