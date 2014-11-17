@@ -1,0 +1,24 @@
+extends layout
+block content
+  div.container
+    p
+      欢迎登录
+      span#name= name
+    textarea(rows="5")
+    button#post
+      留言
+    ul#list
+      if (posts)
+      - var post = posts;
+      - for(var i = 0; i < post.length; ++i){
+        li
+          span #{name} 
+          br
+          span #{post[i].time}
+          &nbsp;
+          !=post[i].content
+      - }
+  script.
+    var $CONFIG={};
+    $CONFIG.username = '#{name}';
+  script(src="/javascripts/lithe.js",data-config="/config.js",data-main="conf/main.js",data-timestamp="1")

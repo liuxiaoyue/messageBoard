@@ -1,0 +1,25 @@
+nav.navbar.navbar-default(role="navigation")
+  div.container
+    div.navbar-header
+      a.navbar-brand(href="/")
+        九九星期八
+    div#navbar.navbar-collapse.collapse
+      ul.nav.navbar-nav
+        li.active
+          a(href="/")首页
+        if(name)
+          li
+            a(href="/u/#{name}")个人中心
+      ul.nav.navbar-nav.navbar-right
+        if(name)
+          li 
+            a(href="/publish")发文章
+          li
+            a(href="/set/pwd")修改密码
+          li
+            a(href="/logout")退出
+        else
+          li
+            a(href="/login")登陆
+          li
+            a(href="/reg")注册

@@ -91,7 +91,6 @@ router.post('/reg/invite', function(req, res){
 		var email = req.body.mail.trim(),
 			nick = req.body.nickname.trim();
 		var activeUrl = 'http://127.0.0.1:3000/reg/active/' + encodeURIComponent(base64.encode('accounts=' + encodeURIComponent(email) + '&timestamps=' + new Date().getTime() + '&nick=' + encodeURIComponent(nick)));
-		console.log(activeUrl);
 		User.get({mail:email}, function(err,user){
 			if(!err || !user){
 				mail.sendMail({
@@ -178,7 +177,7 @@ router.get('/login',function(req, res){
 	if(req.session.user){
 		res.redirect('/home');
 	}else{
-		res.render('login', { title: 'Express' });
+		res.render('login');
 	}
 });
 router.post('/login',function(req, res){
@@ -205,7 +204,8 @@ router.post('/login',function(req, res){
 router.get('/set/pwd', function(req, res){
 	if(req.session.user){
 		res.render('setPwd',{
-			title: '修改密码'
+			title: '修改密码',
+			name : req.session.user.name
 		});
 	}else{
 		res.redirect('/login');
@@ -229,7 +229,7 @@ router.post('/set/pwd', function(req, res){
 						});
 					}
 					res.send({
-						'code' : 'A00001',
+						'code' : 'A00006',
 						'message' : '密码修改成功，请重新登录！！！'
 					});
 				}else{

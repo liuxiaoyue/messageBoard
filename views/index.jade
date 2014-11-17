@@ -1,0 +1,15 @@
+extends layout
+block content
+  div.jumbotron
+    div.container
+      h1 
+        欢迎您来到九九星期八
+      p
+        span #{name} 此刻离开喧嚣热闹的城市,静静的享受下醉人的时光!青春正能量！！
+      p
+        a.btn.btn-primary.btn-lg(href="#" role="button")
+          了解更多
+  script.
+    var $CONFIG={};
+    $CONFIG.username = '#{name}';
+  script(src="/javascripts/lithe.js",data-config="/config.js",data-main="conf/main.js",data-timestamp="1")

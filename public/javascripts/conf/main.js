@@ -19,7 +19,7 @@ define('conf/main', function(require, exports, module) {
 				time : date,
 				name : name
 			},
-			success: function(re) {
+			success: function(re){
 				if(re && re.code === "A00006"){
 					var data = re.data;
 					$('#list').append('<li><span>'+ $CONFIG.username +'</span><br/><span>'+ data.time +'</span><p><span>'+ data.content+'</span></p></li>');

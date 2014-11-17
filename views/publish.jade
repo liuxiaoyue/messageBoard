@@ -1,0 +1,46 @@
+extends layout
+block content
+  link(href="http://cdn.staticfile.org/font-awesome/4.0.3/css/font-awesome.min.css", rel="stylesheet")
+  link(rel="stylesheet", href="/stylesheets/jquery.qeditor.css", type="text/css")
+  style.
+    .textarea {
+      background-color: #ffffff;
+      border: 1px solid #cccccc;
+      -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      -webkit-transition: border linear .2s, box-shadow linear .2s;
+      -moz-transition: border linear .2s, box-shadow linear .2s;
+      -o-transition: border linear .2s, box-shadow linear .2s;
+      transition: border linear .2s, box-shadow linear .2s;
+      padding: 4px 6px;
+      font-size: 14px;
+      line-height: 20px;
+      color: #555555;
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      border-radius: 4px;
+      vertical-align: middle;
+      outline: none;
+      height: 400px;
+    }
+  script(src="http://cdn.staticfile.org/jquery/1.10.2/jquery.min.js", type="text/javascript")
+  script(src="javascripts/lib/jquery.qeditor.js", type="text/javascript")
+  div.container
+    form.form-horizontal(type="post")
+      div.control-group
+        label.control-label(for="inputEmail")
+          标题
+        div.controls
+          input#title(type="text", placeholder="Type your title")
+      div.control-group
+        label.control-label(for="post_body")
+          内容
+        div.controls
+          textarea#post_body.textarea(name="body", placeholder="Type your post")
+      div.control-group
+        div.control-group
+          div.controls
+            button#submit.btn.btn-success(type="submit")提交         
+  script
+    $("#post_body").qeditor({});
