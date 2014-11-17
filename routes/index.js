@@ -204,7 +204,7 @@ router.post('/login',function(req, res){
 /* set pwd */
 router.get('/set/pwd', function(req, res){
 	if(req.session.user){
-		res.render('publish',{
+		res.render('setPwd',{
 			title: '修改密码'
 		});
 	}else{
