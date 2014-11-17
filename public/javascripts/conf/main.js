@@ -10,7 +10,7 @@ define('conf/main', function(require, exports, module) {
 		var el = $(this);
 		var val = $('textarea').val();
 		var date = new Date().getTime();
-		var name = $('#name').html();
+		var name = $CONFIG.username;
 		$.ajax({
 			url: '/post',
 			type: 'post',
@@ -29,5 +29,31 @@ define('conf/main', function(require, exports, module) {
 			}
 		});
 	}
+
+	function delMessage(){
+		var el = $(this);
+		var li = el.parent();
+		var val = li.find('span.content').html();
+		var date = li.find('span.time').html();
+		var name = $CONFIG.username;
+		$.ajax({
+			url: '/delPost',
+			type: 'post',
+			data: {
+				content : val,
+				time : date,
+				name : name
+			},
+			success: function(re){
+				if(re && re.code === "A00006"){
+					li.remove();
+				}else{
+					alert(ret.message || '系统繁忙,请稍后再试！');
+				}
+				
+			}
+		});
+	}
 	$('#post').on('click', postMessage);
+	$('#list').delegate('a', 'click', delMessage);
 });

@@ -14,9 +14,12 @@ block content
         li
           span #{name} 
           br
-          span #{post[i].time}
+          span.time #{post[i].time}
           &nbsp;
-          !=post[i].content
+          span.content!= post[i].content
+          &nbsp;
+          a.del
+            删除
       - }
   script.
     var $CONFIG={};

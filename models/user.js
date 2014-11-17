@@ -36,7 +36,7 @@ User.prototype.save = function(callback){
 		});
 	});
 };
-User.update = function(conf, post, callback){
+User.add = function(conf, post, callback){
 	mongodb.open(function(err, db){
 		if(err){
 			return callback(err);
@@ -51,6 +51,31 @@ User.update = function(conf, post, callback){
 				if(!err && user){
 					//更新文档数据
 					collection.update(conf,{'$push': {"posts" : post}}, function(err){
+						mongodb.close();
+						callback(err, user);
+					});
+				}else{
+					callback(err);
+				}
+			});
+		});
+	});
+};
+
+User.remove = function(conf, post, callback){
+	mongodb.open(function(err, db){
+		if(err){
+			return callback(err);
+		}
+		//读取users集合
+		db.collection('users',function(err,collection){
+			if(err){
+				mongodb.close();
+				return callback(err);
+			}
+			collection.findOne(conf, function(err,user){
+				if(!err && user){
+					collection.update(conf, {'$pull': {"posts" : post}}, function(err){
 						mongodb.close();
 						callback(err, user);
 					});

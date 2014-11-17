@@ -268,7 +268,7 @@ router.get('/u/:user', function(req, res) {
 router.post('/post',function(req, res){
 	if(req.session.user){
 		var post = {content : req.body.content, time : util.formateTime(req.body.time)};
-		User.update({mail : req.session.user.mail}, post, function(err,user){
+		User.add({mail : req.session.user.mail}, post, function(err,user){
 			if(!err && user){
 				res.send({code : 'A00006', data : post});
 			}else{
@@ -279,7 +279,21 @@ router.post('/post',function(req, res){
 		return res.redirect('/login');
 	}
 });
-
+//删除留言
+router.post('/delPost',function(req, res){
+	if(req.session.user){
+		var post = {content : req.body.content, time : req.body.time};
+		User.remove({mail : req.session.user.mail}, post, function(err,user){
+			if(!err && user){
+				res.send({code : 'A00006'});
+			}else{
+				res.send({code : 'A00002', message : '网络繁忙，请稍后再试！带来不便，请谅解....'});
+			}
+		});
+	}else{
+		return res.redirect('/login');
+	}
+});
 router.get('/publish', function(req, res) {
 	res.render('publish',{
 		title : '发文章',
