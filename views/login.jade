@@ -2,13 +2,10 @@ extends layout
 block content
 	div.container
 		form.form-signin(role="form", method="post", action="/login")
-			h2.form-signin-heading
-				请登录
+			h2.form-signin-heading 请登录
 			input.form-control(type="email", placeholder="Email address", required, autofocus, name="mail")
 			input.form-control(type="password", class="form-control", placeholder="Password", required, name="password")
 			div.chekbox
-				label
+				label 记住我
 					input(type="checkbox", value="remember-me", name="remember")
-					记住我	
-			button.btn.btn-lg.btn-primary.btn-block(type="submit")
-				登录
+			button.btn.btn-lg.btn-primary.btn-block(type="submit") 登录

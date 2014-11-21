@@ -1,25 +1,24 @@
 nav.navbar.navbar-default(role="navigation")
   div.container
     div.navbar-header
-      a.navbar-brand(href="/")
-        九九星期八
+      a.navbar-brand(href="/") 九九星期八
     div#navbar.navbar-collapse.collapse
       ul.nav.navbar-nav
         li.active
-          a(href="/")首页
+          a(href="/") 首页
         if(name)
           li
-            a(href="/u/#{name}")个人中心
+            a(href="/u/#{name}") 个人中心
       ul.nav.navbar-nav.navbar-right
         if(name)
           li 
-            a(href="/publish")发文章
+            a(href="/publish") 发文章
           li
-            a(href="/set/pwd")修改密码
+            a(href="/set/account") 账号设置
           li
-            a(href="/logout")退出
+            a(href="/logout") 退出
         else
           li
-            a(href="/login")登陆
+            a(href="/login") 登陆
           li
-            a(href="/reg")注册
+            a(href="/reg") 注册

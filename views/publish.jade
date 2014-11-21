@@ -29,18 +29,16 @@ block content
   div.container
     form.form-horizontal(type="post")
       div.control-group
-        label.control-label(for="inputEmail")
-          标题
+        label.control-label(for="inputEmail") 标题
         div.controls
           input#title(type="text", placeholder="Type your title")
       div.control-group
-        label.control-label(for="post_body")
-          内容
+        label.control-label(for="post_body") 内容
         div.controls
           textarea#post_body.textarea(name="body", placeholder="Type your post")
       div.control-group
         div.control-group
           div.controls
-            button#submit.btn.btn-success(type="submit")提交         
+            button#submit.btn.btn-success(type="submit") 提交
   script
     $("#post_body").qeditor({});

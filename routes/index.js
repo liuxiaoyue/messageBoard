@@ -91,6 +91,7 @@ router.post('/reg/invite', function(req, res){
 		var email = req.body.mail.trim(),
 			nick = req.body.nickname.trim();
 		var activeUrl = 'http://127.0.0.1:3000/reg/active/' + encodeURIComponent(base64.encode('accounts=' + encodeURIComponent(email) + '&timestamps=' + new Date().getTime() + '&nick=' + encodeURIComponent(nick)));
+		console.log(activeUrl);
 		User.get({mail:email}, function(err,user){
 			if(!err || !user){
 				mail.sendMail({
@@ -144,17 +145,12 @@ router.get('/reg/active/:active', function(req, res){
 			var md5 = crypto.createHash("md5");
 			md5.update(password);
 			var pwd = md5.digest("hex");
-			var newUser = new User({
-				mail : activeData['accounts'],
-				name : activeData['nick'],
-				password : pwd
-			});
 			User.get({mail:activeData['accounts']}, function(err,user){
 				if(user){
 					err = 'accounts already exists';
 					render('A00003');
 				}else{
-					newUser.save(function(err, user){
+					User.save(function(err, user){
 						if(err){
 							req.flash('error',err);
 							return res.redirect('/reg');
@@ -165,7 +161,7 @@ router.get('/reg/active/:active', function(req, res){
 							subject: '您在九九星期八注册成功!',
 							text: 'hi'+ user.name + '您的账号'+ activeData['accounts']+'已经激活，您的密码是' + password +',热泪欢迎你.... 谢谢您对留言板的支持。'
 						});
-					});
+					}, activeData['accounts'], activeData['nick'], pwd);
 				}
 			});
 		}
@@ -200,6 +196,30 @@ router.post('/login',function(req, res){
 		}
 	});
 });
+/* set account*/
+router.get('/set/account', function(req, res){
+	if(req.session.user){
+		res.render('setAccount',{
+			title: '账户设置',
+			name : req.session.user.name
+		});
+	}else{
+		res.redirect('/login');
+	}
+});
+
+/* set account*/
+router.get('/set/portrait', function(req, res){
+	if(req.session.user){
+		res.render('setPortrait',{
+			title: '设置头像',
+			name : req.session.user.name
+		});
+	}else{
+		res.redirect('/login');
+	}
+});
+
 /* set pwd */
 router.get('/set/pwd', function(req, res){
 	if(req.session.user){
@@ -251,7 +271,7 @@ router.get('/u/:user', function(req, res) {
 		User.get(conf,function(err, user){
 			if(!err && user){
 				if(user && user.posts){
-					res.render('user', { title: 'Express',posts: user.posts, name : user.name});
+					res.render('user', { title: 'Express', posts: user.posts, name : user.name});
 				}else{
 					res.render('user', { title: 'Express', posts : '', name : req.params.user});
 				}
