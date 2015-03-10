@@ -2,8 +2,7 @@ extends layout
 block content
 	div.container
 		form.form-signin(role="form", method="post", action="/reg/invite")
-			h2.form-signin-heading
-				请注册
+			h2.form-signin-heading 请注册
 			input.form-control(type="email", placeholder="Email address", required, autofocus, name="mail")
 			input.form-control(type="text", placeholder="User Name", required, name="nickname")
 			button.btn.btn-lg.btn-primary.btn-block(type="submit")注册

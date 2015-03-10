@@ -111,9 +111,9 @@ router.post('/reg/invite', function(req, res){
 	}
 });
 router.get('/reg/active/:active', function(req, res){
-	if(req.session.is_login){
-		return res.redirect('/home');
-	}else{
+	// if(req.session.is_login){
+	// 	return res.redirect('/home');
+	// }else{
 		var activeData = util.paramsUrl(base64.decode(decodeURIComponent(req.params.active)));
 		for(var i in activeData){
 			activeData[i] = decodeURIComponent(activeData[i]);
@@ -126,7 +126,7 @@ router.get('/reg/active/:active', function(req, res){
 			if(param === 'A00001'){
 				message = '激活的url不合法或已经过期或者超时~~~';
 			}else if(param === 'A00006'){
-				message = activeData['accounts'] + "该账户已经被激活,您的密码是" + password + '您可以登录之后修改成自己喜欢的密码。'; 
+				message = activeData['accounts'] + "该账户已经被激活,您的密码是" + password + '您可以<a href="/login">登录</a>之后修改成自己喜欢的密码。'; 
 			}else if(param === 'A00002'){
 				message = '链接已经失效！请重新注册！！！';
 			}else if(param === 'A00003'){
@@ -160,12 +160,12 @@ router.get('/reg/active/:active', function(req, res){
 							to : user.mail,
 							subject: '您在九九星期八注册成功!',
 							text: 'hi'+ user.name + '您的账号'+ activeData['accounts']+'已经激活，您的密码是' + password +',热泪欢迎你.... 谢谢您对留言板的支持。'
-						});
+						},function(){});
 					}, activeData['accounts'], activeData['nick'], pwd);
 				}
 			});
 		}
-	}
+	// }
 });
 
 /* GET login page. */
@@ -182,7 +182,7 @@ router.post('/login',function(req, res){
 	var mail = req.body.mail;
 	var remember = req.body.remember;
 	User.get({mail : mail}, function(err,user){
-		if(err || !user){
+		if(!user){
 			req.flash('error','用户名不存在等');
 			return res.redirect('/login');
 		}else{

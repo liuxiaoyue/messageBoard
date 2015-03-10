@@ -14,6 +14,11 @@ User.prototype.save = function(callback, mail, name, password){
 		if(err){
 			return callback(err);
 		}
+		var user = {
+			mail : mail,
+			name : name,
+			password : password
+		};
 		//写入user文档
 		collection.insert(user,function(err,user){
 			callback(err, user[0]);
