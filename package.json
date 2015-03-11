@@ -8,7 +8,7 @@
     "email": "weixiao909@gmail.com",
     "url": "http://weibo.com/xiaoyue909"
   },
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "node ./bin/www"
   },
