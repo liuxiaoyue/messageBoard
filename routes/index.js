@@ -248,15 +248,19 @@ router.post('/set/pwd', function(req, res){
 							maxAge : maxAge
 						});
 					}
-					res.send({
-						'code' : 'A00006',
-						'message' : '密码修改成功，请重新登录！！！'
+					res.render('set/pwd', {
+						title : '注册激活页',
+						message : '密码修改成功，请重新登录！！！'
 					});
 				}else{
-					res.send({
-						'code' : 'A00001',
-						'message' : '系统繁忙！请稍后再试！'
+					res.render('set/pwd', {
+						title : '注册激活页',
+						message : '系统繁忙！请稍后再试！'
 					});
+					// res.send({
+					// 	'code' : 'A00001',
+					// 	'message' : '系统繁忙！请稍后再试！'
+					// });
 				}
 			});
 		}
