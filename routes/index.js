@@ -90,28 +90,27 @@ router.post('/reg/invite', function(req, res){
 	}else{
 		var email = req.body.mail.trim(),
 			nick = req.body.nickname.trim();
-		var activeUrl = 'http://lxyfuture.asia/reg/active/' + encodeURIComponent(base64.encode('accounts=' + encodeURIComponent(email) + '&timestamps=' + new Date().getTime() + '&nick=' + encodeURIComponent(nick)));
-		console.log(activeUrl);
-		User.get({mail:email}, function(err,user){
-			if(!err || !user){
-				mail.sendMail({
-					to : email,
-					subject: nick +',欢迎注册海蓝之星留言板!',
-					html: 'hi'+ nick + '<br>欢迎注册海蓝之星留言板，请点击如下链接或复制链接到浏览器打开以激活您的账号！<a href="'+ activeUrl+'">'+ activeUrl +'</a>'
-				}, function(err, info){
-					if(!err && info){
-						res.render('reg/invite', {
-							title : '注册邀请页',
-							message : '我们已经给您的邮箱' + email + '发送了激活信,他的有效期为30分钟,'
-						});
-					}else{
-						res.render('reg/invite', {
-							title : '500',
-							message : '服务器繁忙，请稍后在试！'
-						});
-					}
-				});
-			}
+		// var activeUrl = 'http://lxyfuture.asia/reg/active/' + encodeURIComponent(base64.encode('accounts=' + encodeURIComponent(email) + '&timestamps=' + new Date().getTime() + '&nick=' + encodeURIComponent(nick)));
+		// console.log(activeUrl);
+		// User.get({mail:email}, function(err,user){
+		// 	if(!err || !user){
+		// 		mail.sendMail({
+		// 			to : email,
+		// 			subject: nick +',欢迎注册海蓝之星留言板!',
+		// 			html: 'hi'+ nick + '<br>欢迎注册海蓝之星留言板，请点击如下链接或复制链接到浏览器打开以激活您的账号！<a href="'+ activeUrl+'">'+ activeUrl +'</a>'
+		// 		}, function(err, info){
+		// 			if(!err && info){
+		// 				res.render('reg/invite', {
+		// 					title : '注册邀请页',
+		// 					message : '我们已经给您的邮箱' + email + '发送了激活信,他的有效期为30分钟,'
+		// 				});
+		// 			}
+		// 		});
+		// 	}
+		// });
+		res.render('reg/invite', {
+			title : '注册邀请页',
+			message : '我们已经给您的邮箱' + email + '发送了激活信,他的有效期为30分钟,'
 		});
 	}
 });
