@@ -104,6 +104,11 @@ router.post('/reg/invite', function(req, res){
 							title : '注册邀请页',
 							message : '我们已经给您的邮箱' + email + '发送了激活信,他的有效期为30分钟,'
 						});
+					}else{
+						res.render('reg/invite', {
+							title : '500',
+							message : '服务器繁忙，请稍后在试！'
+						});
 					}
 				});
 			}
