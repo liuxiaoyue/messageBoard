@@ -52,6 +52,9 @@ app.use('/u/:user', routes);
 app.use('/home', routes);
 //发布文章页
 app.use('/publish', routes);
+//关于网站
+app.use('/about', routes);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,13 +1,17 @@
 extends layout
 block content
-  div.jumbotron
+  div.jumbotron.own-content
     div.container
-      h1 欢迎您来到九九星期八
+      h3 欢迎您来到九九星期八 
+      span #{name} 
       p
-        span #{name} 此刻离开喧嚣热闹的城市,静静的享受下醉人的时光!青春正能量！！
+        span 本网站目前还没有考虑好定位，所以希望有幸浏览到此网页的网友，扫描下面二维码关注我,拜求意见，哈哈
+        img(src="../public/images/apv3sdhukokibuvx4b.png")
       p
-        a.btn.btn-primary.btn-lg(href="#" role="button") 了解更多
+        a.btn.btn-primary.btn-lg(href="/about" role="button") 了解更多
   script.
     var $CONFIG={};
     $CONFIG.username = '#{name}';
+  script(src="http://cdn.bootcss.com/jquery/1.11.2/jquery.min.js")
+  script(src="http://cdn.bootcss.com/bootstrap/3.3.2/js/bootstrap.min.js")
   script(src="/javascripts/lithe.js",data-config="/config.js",data-main="conf/main.js",data-timestamp="1")

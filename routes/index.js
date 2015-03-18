@@ -334,4 +334,8 @@ router.get('/logout', function(req, res){
 	res.redirect('/login');
 });
 
+//关于我们
+router.get('/about', function(req, res){
+	res.render('about',{});
+});
 module.exports = router;
