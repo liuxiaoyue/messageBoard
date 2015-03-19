@@ -249,12 +249,12 @@ router.post('/set/pwd', function(req, res){
 						});
 					}
 					res.render('setPwd', {
-						title : '注册激活页',
+						title : '修改密码页',
 						message : '密码修改成功，请重新登录！！！'
 					});
 				}else{
 					res.render('setPwd', {
-						title : '注册激活页',
+						title : '修改密码页',
 						message : '系统繁忙！请稍后再试！'
 					});
 				}
@@ -273,6 +273,9 @@ router.get('/set/forgetpwd', function(req, res){
 router.post('/set/forgetpwd', function(req, res){
 	var email = req.body.mail;
 	var pwd = util.randomPwd();
+	var md5 = crypto.createHash("md5");
+	md5.update(pwd);
+	var password = md5.digest("hex");
 	//判断用户是否存在
 	User.get({mail:email}, function(err,user){
 		if(user){
@@ -291,7 +294,7 @@ router.post('/set/forgetpwd', function(req, res){
 						}else{
 							res.redirect('/set/forgetpwd');
 						}
-					}, pwd);
+					}, password);
 				}
 			});
 		}else{
