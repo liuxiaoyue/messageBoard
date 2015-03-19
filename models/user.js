@@ -61,14 +61,21 @@ User.prototype.remove = function(conf, post, callback){
 		});
 	});
 };
-User.prototype.setPwd = function(conf, oldpwd, newpwd, callback){
+User.prototype.setPwd = function(conf, callback, newpwd, oldpwd){
 	this.db.collection('users',function(err,collection){
 		if(err){
 			return callback(err);
 		}
 		collection.findOne(conf, function(err,user){
 			if(!err && user){
-				if(user.password === oldpwd){
+				if(newpwd && oldpwd){
+					if(user.password === oldpwd){
+						//更新文档数据
+						collection.update(conf,{'$set': {"password" : newpwd}}, function(err){
+							callback(err, user);
+						});
+					}
+				}else{
 					//更新文档数据
 					collection.update(conf,{'$set': {"password" : newpwd}}, function(err){
 						callback(err, user);

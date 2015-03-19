@@ -90,7 +90,7 @@ router.post('/reg/invite', function(req, res){
 	}else{
 		var email = req.body.mail.trim(),
 			nick = req.body.nickname.trim();
-		var activeUrl = 'http://lxyfuture.asia/reg/active/' + encodeURIComponent(base64.encode('accounts=' + encodeURIComponent(email) + '&timestamps=' + new Date().getTime() + '&nick=' + encodeURIComponent(nick)));
+		var activeUrl = 'http://www.lxyfuture.asia/reg/active/' + encodeURIComponent(base64.encode('accounts=' + encodeURIComponent(email) + '&timestamps=' + new Date().getTime() + '&nick=' + encodeURIComponent(nick)));
 		console.log(activeUrl);
 		User.get({mail:email}, function(err,user){
 			if(!err || !user){
@@ -239,7 +239,7 @@ router.post('/set/pwd', function(req, res){
 		if(newpwd === confirmpwd){
 			oldpwd = crypto.createHash('md5').update(oldpwd).digest('hex');
 			confirmpwd = crypto.createHash('md5').update(confirmpwd).digest('hex');
-			User.setPwd({mail : req.session.user.mail}, oldpwd, confirmpwd, function(err, user){
+			User.setPwd({mail : req.session.user.mail},function(err, user){
 				if(!err && user){
 					req.session.user = null;
 					if(req.cookies.pwd){
@@ -248,25 +248,56 @@ router.post('/set/pwd', function(req, res){
 							maxAge : maxAge
 						});
 					}
-					res.render('set/pwd', {
+					res.render('setPwd', {
 						title : '注册激活页',
 						message : '密码修改成功，请重新登录！！！'
 					});
 				}else{
-					res.render('set/pwd', {
+					res.render('setPwd', {
 						title : '注册激活页',
 						message : '系统繁忙！请稍后再试！'
 					});
-					// res.send({
-					// 	'code' : 'A00001',
-					// 	'message' : '系统繁忙！请稍后再试！'
-					// });
 				}
-			});
+			}, confirmpwd, oldpwd);
 		}
 	}else{
 		res.redirect('/login');
 	}
+});
+/* forget pwd*/
+router.get('/set/forgetpwd', function(req, res){
+	res.render('forgetPwd',{
+		title: '忘记密码'
+	});
+});
+router.post('/set/forgetpwd', function(req, res){
+	var email = req.body.mail;
+	var pwd = util.randomPwd();
+	//判断用户是否存在
+	User.get({mail:email}, function(err,user){
+		if(user){
+			mail.sendMail({
+				to : email,
+				subject: '九九星期八找回密码',
+				html: '你好,你的新密码是' + pwd +';请点击<a href="http://www.lxyfuture.asia/login">登录</a>',
+			}, function(err, info){
+				if(!err && info){
+					User.setPwd({mail : email}, function(err, user){
+						if(user){
+							res.send({
+								'code' : 'A00001',
+								'message' : '系统繁忙！请稍后再试！'
+							});
+						}else{
+							res.redirect('/set/forgetpwd');
+						}
+					}, pwd);
+				}
+			});
+		}else{
+			res.redirect('/set/forgetpwd');
+		}
+	});
 });
 /* GET user center page. */
 router.get('/u/:user', function(req, res) {

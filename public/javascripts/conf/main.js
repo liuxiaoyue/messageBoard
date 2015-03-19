@@ -54,6 +54,22 @@ define('conf/main', function(require, exports, module) {
 			}
 		});
 	}
+
+	function findPwd(){
+		var el = $(this);
+		var mail = el.prev().prev().val();
+		$.ajax({
+			url: '/set/forgetpwd',
+			type: 'post',
+			data: {
+				mail : mail
+			},
+			success: function(){
+				el.prev().prev().parent().html('<br/><br/>邮件发送成功，请查收<br/><br/>');
+			}
+		});
+	}
+	$('#forgetPwdBtn').on('click',findPwd);
 	$('#post').on('click', postMessage);
 	$('#list').delegate('a', 'click', delMessage);
 });

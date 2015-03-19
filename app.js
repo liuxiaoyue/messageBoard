@@ -52,6 +52,8 @@ app.use('/u/:user', routes);
 app.use('/home', routes);
 //发布文章页
 app.use('/publish', routes);
+//忘记密码
+app.use('/set/forgetpwd', routes);
 //关于网站
 app.use('/about', routes);
 

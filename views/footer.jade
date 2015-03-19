@@ -14,3 +14,9 @@ script.
 	  var s = document.getElementsByTagName("script")[0]; 
 	  s.parentNode.insertBefore(hm, s);
 	})();
+script.
+	var $CONFIG={};
+	$CONFIG.username = '#{name}';
+script(src="http://cdn.bootcss.com/jquery/1.11.2/jquery.min.js")
+script(src="http://cdn.bootcss.com/bootstrap/3.3.2/js/bootstrap.min.js")
+script(src="/javascripts/lithe.js",data-config="/config.js",data-main="conf/main.js",data-timestamp="1")
